@@ -22,6 +22,7 @@ const parseDuplicatedInterfaces = (repository: Repository) => {
   }
   return duplicated
 }
+console.log(111)
 const generatePlugin = (protocol: any, host: any, repository: Repository) => {
   // DONE 2.3 protocol 错误，应该是 https
   let duplicated = parseDuplicatedInterfaces(repository)
@@ -107,7 +108,10 @@ router.get('/app/plugin/:repositories', async (ctx) => {
 router.all('/app/mock/(\\d+)/(.+)', async (ctx) => {
   let app: any = ctx.app
   app.counter.mock++
-
+  console.log('-----------ctx.params[1]----------')
+  console.log(ctx.params)
+  console.log(ctx.params[1])
+  console.log('-----------ctx.params[1]----------')
   let [ repositoryId, method, url ] = [+ctx.params[0], ctx.request.method, ctx.params[1]]
 
   let urlWithoutPrefixSlash = /(\/)?(.*)/.exec(url)[2]
@@ -145,12 +149,17 @@ router.all('/app/mock/(\\d+)/(.+)', async (ctx) => {
     })
 
     let listMatched = []
+    // console.log('list', list)
     for (let item of list) {
+      console.log(url, item.url)
+      // console.log('--------------------')
+      // console.log(urlUtils.urlMatchesPattern(url, item.url))
+      // console.log('--------------------')
       if (urlUtils.urlMatchesPattern(url, item.url)) {
         listMatched.push(item)
       }
     }
-
+    // console.log('listMatched: ', listMatched)
     if (listMatched.length > 1) {
       ctx.body = { isOk: false, errMsg: '匹配到多个接口，请修改规则确保接口规则唯一性。 Matched duplicate interfaces, please ensure pattern to be unique.' }
       return
